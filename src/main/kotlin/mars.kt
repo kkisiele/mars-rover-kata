@@ -45,7 +45,7 @@ class Mars(val obstacles: Set<Coordinates> = emptySet()) {
 
 data class Coordinates(val x: Int, val y: Int)
 
-data class Rover(val coordinates: Coordinates, val direction: Direction) {
+private data class Rover(val coordinates: Coordinates, val direction: Direction) {
     fun rotateRight() = Rover(
         this.coordinates, when (this.direction) {
             NORTH -> EAST
@@ -78,6 +78,6 @@ data class Rover(val coordinates: Coordinates, val direction: Direction) {
     }
 }
 
-enum class Direction {
+private enum class Direction {
     NORTH, EAST, SOUTH, WEST
 }
