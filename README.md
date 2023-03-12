@@ -14,3 +14,7 @@ Rules:
 7. The rover wraps around if it reaches the end of the grid.
 8. The grid may have obstacles. If a given sequence of commands encounters an obstacle, the rover moves up to the
    last possible point and reports the obstacle e.g. O:2:2:N
+
+Resources:
+* https://github.com/sandromancuso/mars-rover-screencast
+* https://www.codurance.com/katalyst/mars-rover
