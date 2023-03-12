@@ -26,13 +26,18 @@ class Mars(val obstacles: Set<Coordinates> = emptySet()) {
         'M' -> rover.move()
         else -> throw UnsupportedOperationException("Invalid command $command")
     }
+}
 
-    private fun result(rover: Rover, obstacle: Boolean = false): String = buildString {
+private fun result(rover: Rover, obstacle: Boolean = false): String =
+    Result(rover.coordinates, rover.direction, obstacle).get()
+
+private data class Result(val coordinates: Coordinates, val direction: Direction, val obstacle: Boolean) {
+    fun get(): String = buildString {
         if (obstacle) {
             append("O:")
         }
-        append("${rover.coordinates.x}:${rover.coordinates.y}")
-        append(":").append(toString(rover.direction))
+        append("${coordinates.x}:${coordinates.y}")
+        append(":").append(toString(direction))
     }
 
     private fun toString(direction: Direction): String = when (direction) {
