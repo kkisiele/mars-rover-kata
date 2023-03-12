@@ -5,10 +5,10 @@ import org.junit.jupiter.params.provider.CsvSource
 
 class MarsTests {
     @Test
-    fun noCommandReturnsInitialPosition() {
-        val game = Mars()
+    fun emptyCommandReturnsInitialPosition() {
+        val sut = Mars()
 
-        assertThat(game.execute("")).isEqualTo("0:0:N")
+        assertThat(sut.execute("")).isEqualTo("0:0:N")
     }
 
     @ParameterizedTest
@@ -35,10 +35,10 @@ class MarsTests {
         "RMMMMMMMMMM, 0:0:E",
         "RMMMMMMMMMMMMMMM, 5:0:E"
     )
-    fun movesAccordingToCommand(commands: String, expectedPosition: String) {
-        val game = Mars()
+    fun returnsRoverEndPositionInObstacleFreeWorld(commands: String, expectedPosition: String) {
+        val sut = Mars()
 
-        assertThat(game.execute(commands)).isEqualTo(expectedPosition)
+        assertThat(sut.execute(commands)).isEqualTo(expectedPosition)
     }
 
     @ParameterizedTest
@@ -48,8 +48,8 @@ class MarsTests {
         "RMMMMMM, O:1:0:E",
     )
     fun movesTillObstacleEncountered(commands: String, expectedPosition: String) {
-        val game = Mars(obstacles = setOf(Coordinates(0, 5), Coordinates(2, 0)))
+        val sut = Mars(obstacles = setOf(Coordinates(0, 5), Coordinates(2, 0)))
 
-        assertThat(game.execute(commands)).isEqualTo(expectedPosition)
+        assertThat(sut.execute(commands)).isEqualTo(expectedPosition)
     }
 }
