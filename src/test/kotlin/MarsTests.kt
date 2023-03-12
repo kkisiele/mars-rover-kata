@@ -3,10 +3,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-class MarsRoverTests {
+class MarsTests {
     @Test
-    fun returnsCurrentPosition() {
-        val game = MarsRover()
+    fun noCommandReturnsInitialPosition() {
+        val game = Mars()
 
         assertThat(game.execute("")).isEqualTo("0:0:N")
     }
@@ -35,8 +35,8 @@ class MarsRoverTests {
         "RMMMMMMMMMM, 0:0:E",
         "RMMMMMMMMMMMMMMM, 5:0:E"
     )
-    fun move(commands: String, expectedPosition: String) {
-        val game = MarsRover()
+    fun movesAccordingToCommand(commands: String, expectedPosition: String) {
+        val game = Mars()
 
         assertThat(game.execute(commands)).isEqualTo(expectedPosition)
     }
@@ -45,22 +45,11 @@ class MarsRoverTests {
     @CsvSource(
         "MMMMM, O:0:4:N",
         "MMMMMM, O:0:4:N",
-    )
-    fun obstacles(commands: String, expectedPosition: String) {
-        val game = MarsRover(obstacles = setOf(0 to 5))
-
-        assertThat(game.execute(commands)).isEqualTo(expectedPosition)
-    }
-
-    @ParameterizedTest
-    @CsvSource(
-        "MMMM, O:0:3:N",
         "RMMMMMM, O:1:0:E",
     )
-    fun obstacles2(commands: String, expectedPosition: String) {
-        val game = MarsRover(obstacles = setOf(2 to 0, 0 to 4))
+    fun movesTillObstacleEncountered(commands: String, expectedPosition: String) {
+        val game = Mars(obstacles = setOf(Coordinates(0, 5), Coordinates(2, 0)))
 
         assertThat(game.execute(commands)).isEqualTo(expectedPosition)
     }
-
 }
