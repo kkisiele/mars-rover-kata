@@ -3,7 +3,6 @@ import Direction.NORTH
 import Direction.SOUTH
 import Direction.WEST
 
-
 class Mars(val obstacles: Set<Coordinates> = emptySet()) {
     private val grid = Grid(obstacles)
 
@@ -25,8 +24,7 @@ class Mars(val obstacles: Set<Coordinates> = emptySet()) {
         else -> throw UnsupportedOperationException("Invalid command $command")
     }
 
-    private fun result(rover: Rover): String =
-        Result(rover.location, rover.direction, rover.obstacleEncountered).get()
+    private fun result(rover: Rover): String = Result(rover.location, rover.direction, rover.obstacleEncountered).get()
 
     private data class Result(val coordinates: Coordinates, val direction: Direction, val obstacle: Boolean) {
         fun get(): String = buildString {

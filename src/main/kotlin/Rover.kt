@@ -5,7 +5,7 @@ data class Rover(val location: Coordinates, val direction: Direction, val obstac
 
     fun move(grid: Grid): Rover {
         val nextLocation = grid.nextLocation(this.location, this.direction)
-        if(grid.hasObstacle(nextLocation)) {
+        if (grid.hasObstacle(nextLocation)) {
             return this.copy(obstacleEncountered = true)
         }
         return Rover(nextLocation, this.direction)
