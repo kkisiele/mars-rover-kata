@@ -12,7 +12,7 @@ class Mars(val obstacles: Set<Coordinates> = emptySet()) {
         var position = Rover(Coordinates(0, 0), NORTH)
         for (command in commands) {
             val nextPosition = execute(command, position)
-            if (obstacles.contains(nextPosition.coordinates)) {
+            if (obstacles.contains(nextPosition.location)) {
                 return result(position, obstacle = true)
             }
             position = nextPosition
@@ -29,7 +29,7 @@ class Mars(val obstacles: Set<Coordinates> = emptySet()) {
 }
 
 private fun result(rover: Rover, obstacle: Boolean = false): String =
-    Result(rover.coordinates, rover.direction, obstacle).get()
+    Result(rover.location, rover.direction, obstacle).get()
 
 private data class Result(val coordinates: Coordinates, val direction: Direction, val obstacle: Boolean) {
     fun get(): String = buildString {
@@ -50,39 +50,38 @@ private data class Result(val coordinates: Coordinates, val direction: Direction
 
 data class Coordinates(val x: Int, val y: Int)
 
-private data class Rover(val coordinates: Coordinates, val direction: Direction) {
-    fun rotateRight() = Rover(
-        this.coordinates, when (this.direction) {
-            NORTH -> EAST
-            EAST -> SOUTH
-            SOUTH -> WEST
-            WEST -> NORTH
-        }
-    )
+private data class Rover(val location: Coordinates, val direction: Direction) {
+    fun rotateRight() = Rover(this.location, this.direction.onRight)
 
-    fun rotateLeft() = Rover(
-        this.coordinates, when (this.direction) {
-            NORTH -> WEST
-            WEST -> SOUTH
-            SOUTH -> EAST
-            EAST -> NORTH
-        }
-    )
+    fun rotateLeft() = Rover(this.location, this.direction.onLeft)
 
     fun move() = when (this.direction) {
-        NORTH -> Rover(Coordinates(coordinates.x, (coordinates.y + 1) % GRID_HEIGHT), this.direction)
-        EAST -> Rover(Coordinates((coordinates.x + 1) % GRID_WIDTH, coordinates.y), this.direction)
+        NORTH -> Rover(Coordinates(location.x, (location.y + 1) % GRID_HEIGHT), this.direction)
+        EAST -> Rover(Coordinates((location.x + 1) % GRID_WIDTH, location.y), this.direction)
         SOUTH -> Rover(
-            Coordinates(coordinates.x, if (coordinates.y > 0) coordinates.y - 1 else GRID_HEIGHT - 1),
+            Coordinates(location.x, if (location.y > 0) location.y - 1 else GRID_HEIGHT - 1),
             this.direction
         )
         WEST -> Rover(
-            Coordinates(if (coordinates.x > 0) coordinates.x - 1 else GRID_WIDTH - 1, coordinates.y),
+            Coordinates(if (location.x > 0) location.x - 1 else GRID_WIDTH - 1, location.y),
             this.direction
         )
     }
 }
 
 private enum class Direction {
-    NORTH, EAST, SOUTH, WEST
+    NORTH, EAST, SOUTH, WEST;
+
+    val onLeft: Direction
+        get() = neighbours(this).first
+
+    val onRight: Direction
+        get() = neighbours(this).second
+
+    private fun neighbours(direction: Direction): Pair<Direction, Direction> = when(direction) {
+        NORTH -> Pair(WEST, EAST)
+        EAST -> Pair(NORTH, SOUTH)
+        SOUTH -> Pair(EAST, WEST)
+        WEST -> Pair(SOUTH, NORTH)
+    }
 }
