@@ -1,3 +1,5 @@
+data class Coordinates(val x: Int, val y: Int)
+
 enum class Direction {
     NORTH, EAST, SOUTH, WEST;
 
