@@ -3,33 +3,45 @@ import Direction.NORTH
 import Direction.SOUTH
 import Direction.WEST
 
-private const val GRID_HEIGHT = 10
-private const val GRID_WIDTH = 10
 
 class Mars(val obstacles: Set<Coordinates> = emptySet()) {
+    private val grid = Grid(obstacles)
 
     fun execute(commands: String): String {
-        var position = Rover(Coordinates(0, 0), NORTH)
+        var rover = Rover(Coordinates(0, 0), NORTH)
         for (command in commands) {
-            val nextPosition = execute(command, position)
-            if (obstacles.contains(nextPosition.location)) {
-                return result(position, obstacle = true)
+            rover = execute(command, rover)
+            if (rover.obstacleEncountered) {
+                break
             }
-            position = nextPosition
         }
-        return result(position)
+        return result(rover)
     }
 
     private fun execute(command: Char, rover: Rover): Rover = when (command) {
         'R' -> rover.rotateRight()
         'L' -> rover.rotateLeft()
-        'M' -> rover.move()
+        'M' -> rover.move(grid)
         else -> throw UnsupportedOperationException("Invalid command $command")
     }
 }
 
-private fun result(rover: Rover, obstacle: Boolean = false): String =
-    Result(rover.location, rover.direction, obstacle).get()
+private class Grid(private val obstacles: Set<Coordinates>) {
+    private val height = 10
+    private val width = 10
+
+    fun nextLocation(location: Coordinates, direction: Direction) = when (direction) {
+        NORTH -> Coordinates(location.x, (location.y + 1) % height)
+        EAST -> Coordinates((location.x + 1) % width, location.y)
+        SOUTH -> Coordinates(location.x, if (location.y > 0) location.y - 1 else height - 1)
+        WEST -> Coordinates(if (location.x > 0) location.x - 1 else width - 1, location.y)
+    }
+
+    fun hasObstacle(location: Coordinates) = obstacles.contains(location)
+}
+
+private fun result(rover: Rover): String =
+    Result(rover.location, rover.direction, rover.obstacleEncountered).get()
 
 private data class Result(val coordinates: Coordinates, val direction: Direction, val obstacle: Boolean) {
     fun get(): String = buildString {
@@ -50,22 +62,17 @@ private data class Result(val coordinates: Coordinates, val direction: Direction
 
 data class Coordinates(val x: Int, val y: Int)
 
-private data class Rover(val location: Coordinates, val direction: Direction) {
+private data class Rover(val location: Coordinates, val direction: Direction, val obstacleEncountered: Boolean = false) {
     fun rotateRight() = Rover(this.location, this.direction.onRight)
 
     fun rotateLeft() = Rover(this.location, this.direction.onLeft)
 
-    fun move() = when (this.direction) {
-        NORTH -> Rover(Coordinates(location.x, (location.y + 1) % GRID_HEIGHT), this.direction)
-        EAST -> Rover(Coordinates((location.x + 1) % GRID_WIDTH, location.y), this.direction)
-        SOUTH -> Rover(
-            Coordinates(location.x, if (location.y > 0) location.y - 1 else GRID_HEIGHT - 1),
-            this.direction
-        )
-        WEST -> Rover(
-            Coordinates(if (location.x > 0) location.x - 1 else GRID_WIDTH - 1, location.y),
-            this.direction
-        )
+    fun move(grid: Grid): Rover {
+        val nextLocation = grid.nextLocation(this.location, this.direction)
+        if(grid.hasObstacle(nextLocation)) {
+            return this.copy(obstacleEncountered = true)
+        }
+        return Rover(nextLocation, this.direction)
     }
 }
 
@@ -78,7 +85,7 @@ private enum class Direction {
     val onRight: Direction
         get() = neighbours(this).second
 
-    private fun neighbours(direction: Direction): Pair<Direction, Direction> = when(direction) {
+    private fun neighbours(direction: Direction): Pair<Direction, Direction> = when (direction) {
         NORTH -> Pair(WEST, EAST)
         EAST -> Pair(NORTH, SOUTH)
         SOUTH -> Pair(EAST, WEST)
