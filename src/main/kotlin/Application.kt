@@ -3,8 +3,8 @@ import Direction.NORTH
 import Direction.SOUTH
 import Direction.WEST
 
-class Mars(val obstacles: Set<Coordinates> = emptySet()) {
-    private val grid = Grid(obstacles)
+class Application(val obstacles: Set<Coordinates> = emptySet()) {
+    private val planet = Planet(obstacles)
 
     fun execute(commands: String): String {
         var rover = Rover(Coordinates(0, 0), NORTH)
@@ -20,7 +20,7 @@ class Mars(val obstacles: Set<Coordinates> = emptySet()) {
     private fun execute(command: Char, rover: Rover): Rover = when (command) {
         'R' -> rover.rotateRight()
         'L' -> rover.rotateLeft()
-        'M' -> rover.move(grid)
+        'M' -> rover.move(planet)
         else -> throw UnsupportedOperationException("Invalid command $command")
     }
 

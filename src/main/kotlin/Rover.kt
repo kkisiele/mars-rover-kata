@@ -3,9 +3,9 @@ data class Rover(val location: Coordinates, val direction: Direction, val obstac
 
     fun rotateLeft() = Rover(this.location, this.direction.onLeft)
 
-    fun move(grid: Grid): Rover {
-        val nextLocation = grid.nextLocation(this.location, this.direction)
-        if (grid.hasObstacle(nextLocation)) {
+    fun move(planet: Planet): Rover {
+        val nextLocation = planet.nextLocation(this.location, this.direction)
+        if (planet.hasObstacle(nextLocation)) {
             return this.copy(obstacleEncountered = true)
         }
         return Rover(nextLocation, this.direction)

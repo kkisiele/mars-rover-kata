@@ -3,10 +3,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-class MarsTests {
+class ApplicationTests {
     @Test
     fun emptyCommandReturnsInitialPosition() {
-        val sut = Mars()
+        val sut = Application()
 
         assertThat(sut.execute("")).isEqualTo("0:0:N")
     }
@@ -36,7 +36,7 @@ class MarsTests {
         "RMMMMMMMMMMMMMMM, 5:0:E"
     )
     fun returnsRoverEndPositionInObstacleFreeWorld(commands: String, expectedPosition: String) {
-        val sut = Mars()
+        val sut = Application()
 
         assertThat(sut.execute(commands)).isEqualTo(expectedPosition)
     }
@@ -48,7 +48,7 @@ class MarsTests {
         "RMMMMMM, O:1:0:E",
     )
     fun movesTillObstacleEncountered(commands: String, expectedPosition: String) {
-        val sut = Mars(obstacles = setOf(Coordinates(0, 5), Coordinates(2, 0)))
+        val sut = Application(obstacles = setOf(Coordinates(0, 5), Coordinates(2, 0)))
 
         assertThat(sut.execute(commands)).isEqualTo(expectedPosition)
     }

@@ -1,4 +1,4 @@
-class Grid(private val obstacles: Set<Coordinates>) {
+class Planet(private val obstacles: Set<Coordinates>) {
     private val height = 10
     private val width = 10
 
