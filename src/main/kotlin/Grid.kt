@@ -9,5 +9,5 @@ class Grid(private val obstacles: Set<Coordinates>) {
         Direction.WEST -> Coordinates(if (location.x > 0) location.x - 1 else width - 1, location.y)
     }
 
-    fun hasObstacle(location: Coordinates) = obstacles.contains(location)
+    fun hasObstacle(location: Coordinates) = location in obstacles
 }
